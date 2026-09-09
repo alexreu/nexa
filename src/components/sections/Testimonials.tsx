@@ -14,17 +14,20 @@ export function Testimonials() {
           title="Des équipes qui ont arrêté de faire à la main"
         />
 
-        <Stagger step={0.08} className="grid gap-4 md:grid-cols-3">
+        <Stagger
+          step={0.06}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {testimonials.map((testimonial) => (
             <StaggerItem key={testimonial.firstName} className="h-full">
-              <figure className="flex h-full flex-col justify-between gap-6 rounded-2xl border bg-card p-6 shadow-card">
+              <figure className="flex h-full flex-col justify-between gap-6 rounded-2xl border bg-card p-6 shadow-card transition-[box-shadow,border-color] duration-300 ease-out-soft hover:border-line-strong hover:shadow-lifted">
                 <blockquote className="text-pretty">
                   « {testimonial.quote} »
                 </blockquote>
                 <figcaption className="flex items-center gap-3">
                   <span
                     aria-hidden="true"
-                    className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary"
+                    className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-brand-text"
                   >
                     {testimonial.firstName.charAt(0)}
                   </span>

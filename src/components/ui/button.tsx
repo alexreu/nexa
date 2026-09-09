@@ -30,7 +30,7 @@ const buttonVariants = cva(
           "hover:border-line-strong hover:bg-sunk",
         ],
         ghost: "text-muted-foreground hover:bg-sunk hover:text-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-brand-text underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-9 rounded-md px-3.5 text-sm",

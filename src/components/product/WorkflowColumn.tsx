@@ -7,7 +7,7 @@ export type StepStatus = "idle" | "running" | "done";
 
 const kindStyles: Record<NodeKind, string> = {
   trigger: "bg-sunk text-foreground border-border",
-  ai: "bg-primary/10 text-primary border-primary/25",
+  ai: "bg-primary/10 text-brand-text border-primary/25",
   action: "bg-cyan/10 text-cyan border-cyan/25",
 };
 

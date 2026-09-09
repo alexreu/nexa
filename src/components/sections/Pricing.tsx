@@ -19,22 +19,22 @@ export function Pricing() {
           description="Commencez gratuitement, changez d'offre quand votre volume l'exige."
         />
 
-        <Stagger step={0.08} className="grid items-start gap-4 lg:grid-cols-3">
+        <Stagger step={0.06} className="grid gap-4 lg:grid-cols-3">
           {plans.map((plan) => (
             <StaggerItem key={plan.name} className="h-full">
               <article
                 className={cn(
                   "flex h-full flex-col gap-6 rounded-2xl border bg-card p-6 sm:p-7",
                   plan.featured
-                    ? "border-primary/40 shadow-glow lg:-my-4 lg:py-11"
-                    : "shadow-card",
+                    ? "border-primary/40 shadow-glow lg:-my-4 lg:h-[calc(100%+2rem)] lg:py-11"
+                    : "shadow-card transition-shadow duration-300 ease-out-soft hover:shadow-lifted",
                 )}
               >
                 <header className="flex flex-col gap-3">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-h3">{plan.name}</h3>
                     {plan.featured ? (
-                      <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[0.6875rem] font-semibold tracking-[0.06em] text-primary uppercase">
+                      <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[0.6875rem] font-semibold tracking-[0.06em] text-brand-text uppercase">
                         Recommandé
                       </span>
                     ) : null}

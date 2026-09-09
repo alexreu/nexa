@@ -5,6 +5,7 @@ import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { DemoDialog } from "@/components/product/DemoDialog";
 import { buttonVariants } from "@/components/ui/button";
 import { accountLinks } from "@/data/nav";
+import { cn } from "@/lib/utils";
 
 function HeroBackdrop() {
   return (
@@ -34,7 +35,7 @@ export function Hero() {
         >
           <StaggerItem>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pr-4 pl-1.5 text-[0.8125rem] shadow-subtle">
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[0.6875rem] font-semibold text-primary">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[0.6875rem] font-semibold text-brand-text">
                 <Sparkles className="size-3" aria-hidden="true" />
                 IA
               </span>
@@ -62,10 +63,13 @@ export function Hero() {
           </StaggerItem>
 
           <StaggerItem className="mt-2">
-            <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
               <a
                 href={accountLinks.signUp.href}
-                className={buttonVariants({ size: "lg" })}
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "w-full sm:w-auto",
+                )}
               >
                 {accountLinks.signUp.label}
               </a>

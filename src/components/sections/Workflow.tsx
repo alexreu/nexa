@@ -96,7 +96,7 @@ export function Workflow() {
         />
 
         <Stagger
-          step={0.12}
+          step={0.1}
           className="relative grid gap-10 lg:grid-cols-3 lg:gap-8"
         >
           <span
@@ -111,7 +111,7 @@ export function Workflow() {
                 key={step.title}
                 className="relative flex flex-col gap-5"
               >
-                <span className="grid size-10 place-items-center rounded-full border bg-background font-mono text-sm font-semibold text-primary">
+                <span className="grid size-10 place-items-center rounded-full border bg-background font-mono text-sm font-semibold text-brand-text">
                   {index + 1}
                 </span>
                 {/* Number, then visual, then copy: the fixed-height blocks

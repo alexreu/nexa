@@ -13,7 +13,7 @@ export function Statistics() {
     >
       <Container>
         <Stagger
-          step={0.08}
+          step={0.06}
           className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
         >
           {stats.map((stat) => (

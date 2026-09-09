@@ -36,6 +36,7 @@
   --color-subtle: var(--ink-subtle);
   --color-line-strong: var(--line-strong);
   --color-brand-hover: var(--brand-hover);
+  --color-brand-text: var(--brand-text);
   --color-cyan: var(--accent-cyan);
   --color-scrim: var(--scrim);
   --color-success: var(--success);
@@ -104,6 +105,7 @@
 
   --brand: oklch(0.535 0.205 278);
   --brand-hover: oklch(0.492 0.2 278);
+  --brand-text: oklch(0.52 0.205 278);
   --brand-ink: oklch(1 0 0);
   --brand-tint: oklch(0.535 0.205 278 / 0.08);
 
@@ -145,6 +147,7 @@
 
   --brand: oklch(0.535 0.205 278);
   --brand-hover: oklch(0.578 0.2 278);
+  --brand-text: oklch(0.68 0.15 278);
   --brand-ink: oklch(1 0 0);
   --brand-tint: oklch(0.62 0.2 278 / 0.16);
 

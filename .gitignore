@@ -47,6 +47,3 @@ next-env.d.ts
 /blob-report
 /playwright/.cache
 
-# local verification helpers (promoted to scripts/ in the portfolio phase)
-.shoot.mjs
-.check.mjs

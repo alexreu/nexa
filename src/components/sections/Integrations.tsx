@@ -15,11 +15,11 @@ export function Integrations() {
           description="Branchez vos applications existantes et laissez Nexa faire circuler l'information entre elles."
         />
 
-        <Stagger step={0.05} className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stagger step={0.06} className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {integrations.map((integration) => (
             <StaggerItem key={integration.name} className="h-full">
               <div className="group flex h-full flex-col items-center gap-2 rounded-xl border bg-card px-3 py-5 text-center shadow-subtle transition-[box-shadow,border-color] duration-300 hover:border-line-strong hover:shadow-card">
-                <span className="grid size-10 place-items-center rounded-xl border bg-sunk text-muted-foreground transition-colors duration-300 group-hover:bg-primary/10 group-hover:text-primary">
+                <span className="grid size-10 place-items-center rounded-xl border bg-sunk text-muted-foreground transition-colors duration-300 group-hover:bg-primary/10 group-hover:text-brand-text">
                   <integration.icon className="size-5" aria-hidden="true" />
                 </span>
                 <span className="mt-1 text-sm font-medium">

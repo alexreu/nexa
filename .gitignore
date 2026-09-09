@@ -46,3 +46,6 @@ next-env.d.ts
 /test-results
 /blob-report
 /playwright/.cache
+
+# local screenshot helper (promoted to scripts/ in the portfolio phase)
+.shoot.mjs

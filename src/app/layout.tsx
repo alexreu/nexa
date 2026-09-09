@@ -40,6 +40,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <a
+          href="#contenu"
+          className="sr-only rounded-lg border bg-card px-4 py-2 text-sm font-medium shadow-overlay focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
+        >
+          Aller au contenu principal
+        </a>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

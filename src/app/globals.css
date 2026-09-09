@@ -37,13 +37,15 @@
   --color-line-strong: var(--line-strong);
   --color-brand-hover: var(--brand-hover);
   --color-cyan: var(--accent-cyan);
+  --color-scrim: var(--scrim);
+  --color-success: var(--success);
 
   /* Typography */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);
 
-  --text-display: clamp(2.75rem, 1.6rem + 4.6vw, 5.25rem);
+  --text-display: clamp(2.375rem, 1.35rem + 4.4vw, 5rem);
   --text-display--line-height: 1.02;
   --text-display--letter-spacing: -0.032em;
   --text-display--font-weight: 600;
@@ -106,6 +108,7 @@
   --brand-tint: oklch(0.535 0.205 278 / 0.08);
 
   --accent-cyan: oklch(0.612 0.102 205);
+  --scrim: oklch(0.1875 0.02 278 / 0.4);
   --danger: oklch(0.577 0.245 27.325);
   --success: oklch(0.58 0.14 155);
 
@@ -146,6 +149,7 @@
   --brand-tint: oklch(0.62 0.2 278 / 0.16);
 
   --accent-cyan: oklch(0.76 0.115 205);
+  --scrim: oklch(0 0 0 / 0.65);
   --danger: oklch(0.704 0.191 22.216);
   --success: oklch(0.7 0.15 155);
 
@@ -180,8 +184,6 @@
     @apply bg-background text-foreground;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
-    /* Prevents the layout from ever scrolling sideways (DoD requirement). */
-    overflow-x: clip;
   }
 
   /* Never remove the outline without a replacement (a11y requirement). */

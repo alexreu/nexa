@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "showcase": "node scripts/showcase.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

@@ -2,17 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { AuthDialog } from "@/components/auth/AuthDialog";
 import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/layout/Logo";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { accountLinks, navLinks } from "@/data/nav";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const headerRef = useRef<HTMLElement>(null);
   const [stuck, setStuck] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   /**
    * The header sits one pixel above the viewport when stuck, so a single
@@ -62,15 +64,15 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
-          <a
-            href={accountLinks.signIn.href}
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "sm" }),
-              "hidden lg:inline-flex",
-            )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setAuthOpen(true)}
+            className="hidden lg:inline-flex"
           >
             {accountLinks.signIn.label}
-          </a>
+          </Button>
           <a
             href={accountLinks.signUp.href}
             className={cn(
@@ -81,10 +83,12 @@ export function Header() {
             {accountLinks.signUp.label}
           </a>
           <div className="lg:hidden">
-            <MobileNav />
+            <MobileNav onSignIn={() => setAuthOpen(true)} />
           </div>
         </div>
       </Container>
+
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
     </header>
   );
 }

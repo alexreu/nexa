@@ -18,9 +18,10 @@ import { accountLinks, navLinks } from "@/data/nav";
  * Radix Dialog handles the accessibility contract for free: `aria-expanded`
  * on the trigger, focus trapping, Escape to close and scroll locking.
  */
-export function MobileNav() {
+export function MobileNav({ onSignIn }: { onSignIn: () => void }) {
   const [open, setOpen] = useState(false);
   const pendingTarget = useRef<string | null>(null);
+  const pendingSignIn = useRef(false);
 
   /**
    * Closing normally returns focus to the trigger, which scrolls the page
@@ -29,6 +30,15 @@ export function MobileNav() {
    * where a keyboard user expects to land.
    */
   function handleCloseAutoFocus(event: Event) {
+    // Opening the sign-in dialog straight away would fight the sheet over
+    // focus, so it waits until the sheet has finished closing.
+    if (pendingSignIn.current) {
+      pendingSignIn.current = false;
+      event.preventDefault();
+      onSignIn();
+      return;
+    }
+
     const targetId = pendingTarget.current;
     pendingTarget.current = null;
     if (!targetId) return;
@@ -43,6 +53,11 @@ export function MobileNav() {
 
   function handleNavigate(href: string) {
     pendingTarget.current = href.startsWith("#") ? href.slice(1) : null;
+    setOpen(false);
+  }
+
+  function handleSignIn() {
+    pendingSignIn.current = true;
     setOpen(false);
   }
 
@@ -78,15 +93,14 @@ export function MobileNav() {
           ))}
         </nav>
         <div className="mt-auto flex flex-col gap-2 border-t p-4">
-          <SheetClose asChild>
-            <a
-              href={accountLinks.signIn.href}
-              onClick={() => handleNavigate(accountLinks.signIn.href)}
-              className={buttonVariants({ variant: "secondary" })}
-            >
-              {accountLinks.signIn.label}
-            </a>
-          </SheetClose>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleSignIn}
+            className="w-full"
+          >
+            {accountLinks.signIn.label}
+          </Button>
           <SheetClose asChild>
             <a
               href={accountLinks.signUp.href}

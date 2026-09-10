@@ -58,6 +58,9 @@ Header collant · Hero · Aperçu produit · Preuve sociale · Fonctionnalités 
 Intégrations · Comment ça marche · Chiffres · Témoignages · Tarifs · FAQ ·
 Appel à l'action final · Pied de page.
 
+Deux modales : la démonstration du workflow et le formulaire de
+connexion/inscription.
+
 ### Points d'intégration notables
 
 **Palette validée par calcul, pas à l'œil.** Les couleurs sont définies en
@@ -81,10 +84,20 @@ mode `strict` interdit les composants `motion.*` lourds, et
 `prefers-reduced-motion` est respecté partout — le compteur affiche
 immédiatement sa valeur finale plutôt que de rester figé à zéro.
 
+**Formulaire de connexion sans authentification.** « Connexion » ouvre une
+vraie modale avec deux modes, connexion et inscription. La validation est
+réelle — format de l'e-mail, longueur du mot de passe, nom requis à
+l'inscription — et chaque champ porte `aria-invalid` et pointe vers son
+message par `aria-describedby`, le focus allant au premier champ fautif. Mais
+rien n'est authentifié : aucune requête n'est émise, `autoComplete` est
+désactivé pour qu'aucun gestionnaire de mots de passe ne propose d'enregistrer
+un identifiant sur un produit qui n'existe pas, et la modale le dit en toutes
+lettres. Un test vérifie qu'aucune requête non-GET ne part.
+
 **Liens sans destination.** Le produit n'existant pas, les entrées de pied de
 page sans page correspondante sont du texte, pas des contrôles qui ne mènent
-nulle part, et le pied de page le dit. Les actions liées au compte pointent
-vers la section Tarifs, les boutons de tarifs vers l'appel à l'action final.
+nulle part, et le pied de page le dit. Les boutons de tarifs pointent vers
+l'appel à l'action final.
 
 ## Captures
 
@@ -95,6 +108,10 @@ vers la section Tarifs, les boutons de tarifs vers l'appel à l'action final.
 | Tarifs                                  | Thème sombre                              |
 | --------------------------------------- | ----------------------------------------- |
 | ![Tarifs](docs/screenshots/pricing.png) | ![Sombre](docs/screenshots/hero-dark.png) |
+
+| Connexion                                      | États d'erreur                               |
+| ---------------------------------------------- | -------------------------------------------- |
+| ![Connexion](docs/screenshots/auth-signin.png) | ![Erreurs](docs/screenshots/auth-errors.png) |
 
 <img src="docs/screenshots/mobile.png" alt="Vue mobile" width="320" />
 
@@ -183,6 +200,9 @@ scripts/                      génération des captures
 - La maquette produit est décorative : masquée aux lecteurs d'écran et décrite
   par une légende textuelle.
 - `prefers-reduced-motion` neutralise animations et défilement doux.
+- Le formulaire de connexion associe étiquettes, champs et messages d'erreur,
+  et déplace le focus sur le premier champ à corriger. Lighthouse note 100 en
+  accessibilité modale ouverte comme fermée.
 
 ## Tests
 
@@ -190,13 +210,14 @@ scripts/                      génération des captures
 pnpm test:e2e
 ```
 
-Cinq scénarios, joués sur desktop (1280) et mobile (375) :
+Six scénarios, joués sur desktop (1280) et mobile (375) :
 
 1. la page se charge, ses repères existent, la console est vide ;
 2. la navigation mobile s'ouvre, navigue et se ferme au clavier ;
 3. la FAQ ouvre et referme ses réponses, une seule à la fois ;
 4. les appels à l'action sont visibles et la démonstration s'exécute ;
-5. aucun débordement horizontal à 375, 390 et 430 px.
+5. le formulaire de connexion valide sa saisie et n'émet aucune requête ;
+6. aucun débordement horizontal à 375, 390 et 430 px.
 
 ## Déploiement
 

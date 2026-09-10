@@ -134,16 +134,17 @@ pnpm exec playwright install chromium
 
 ## Scripts
 
-| Commande           | Effet                                              |
-| ------------------ | -------------------------------------------------- |
-| `pnpm dev`         | Serveur de développement                           |
-| `pnpm build`       | Build de production                                |
-| `pnpm start`       | Sert le build de production                        |
-| `pnpm lint`        | ESLint                                             |
-| `pnpm typecheck`   | `tsc --noEmit`                                     |
-| `pnpm format`      | Prettier avec tri des classes Tailwind             |
-| `pnpm test:e2e`    | Playwright (build de production, desktop + mobile) |
-| `pnpm screenshots` | Régénère les captures du README                    |
+| Commande           | Effet                                                |
+| ------------------ | ---------------------------------------------------- |
+| `pnpm dev`         | Serveur de développement                             |
+| `pnpm build`       | Build de production                                  |
+| `pnpm start`       | Sert le build de production                          |
+| `pnpm lint`        | ESLint                                               |
+| `pnpm typecheck`   | `tsc --noEmit`                                       |
+| `pnpm format`      | Prettier avec tri des classes Tailwind               |
+| `pnpm test:e2e`    | Playwright (build de production, desktop + mobile)   |
+| `pnpm screenshots` | Régénère les captures du README                      |
+| `pnpm showcase`    | Compose l'image de présentation (portfolio, profils) |
 
 Les captures se prennent sur un serveur déjà lancé :
 

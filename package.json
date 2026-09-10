@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
     "screenshots": "node scripts/screenshots.mjs",
-    "showcase": "node scripts/showcase.mjs"
+    "showcase": "node scripts/showcase.mjs",
+    "gallery": "node scripts/gallery.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

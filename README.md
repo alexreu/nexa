@@ -145,6 +145,7 @@ pnpm exec playwright install chromium
 | `pnpm test:e2e`    | Playwright (build de production, desktop + mobile)   |
 | `pnpm screenshots` | Régénère les captures du README                      |
 | `pnpm showcase`    | Compose l'image de présentation (portfolio, profils) |
+| `pnpm gallery`     | Compose une image par section, pour une galerie      |
 
 Les captures se prennent sur un serveur déjà lancé :
 

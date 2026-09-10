@@ -204,9 +204,15 @@ Le projet est prêt pour Vercel : build statique, aucune variable requise pour
 fonctionner.
 
 1. Importer le dépôt dans Vercel.
-2. Définir `NEXT_PUBLIC_SITE_URL` sur l'URL de production — elle alimente
-   l'URL canonique, le sitemap, `robots.txt` et les cartes de partage.
-3. Déployer, puis reporter l'URL en haut de ce fichier.
+2. Déployer. Aucune variable n'est requise : à défaut de
+   `NEXT_PUBLIC_SITE_URL`, l'origine est déduite des variables de
+   déploiement de Vercel, puis de `http://localhost:3000`.
+3. Facultatif : définir `NEXT_PUBLIC_SITE_URL` sur le domaine définitif pour
+   figer l'URL canonique, le sitemap, `robots.txt` et les cartes de partage.
+   Une valeur vide, sans schéma ou avec un slash final est tolérée ; ne
+   laissez simplement pas la variable définie à vide en pensant la désactiver
+   — supprimez-la.
+4. Reporter l'URL en haut de ce fichier.
 
 Voir `.env.example`.
 

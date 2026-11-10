@@ -25,7 +25,7 @@ export function Integrations() {
                 <span className="mt-1 text-sm font-medium">
                   {integration.name}
                 </span>
-                <span className="text-[0.6875rem] text-subtle">
+                <span className="text-small text-subtle">
                   {integration.category}
                 </span>
               </div>

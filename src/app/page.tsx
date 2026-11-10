@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { FAQ } from "@/components/sections/FAQ";
@@ -14,7 +15,7 @@ import { Workflow } from "@/components/sections/Workflow";
 
 export default function HomePage() {
   return (
-    <>
+    <AuthProvider>
       <Header />
       <main id="contenu">
         <Hero />
@@ -30,6 +31,6 @@ export default function HomePage() {
         <FinalCTA />
       </main>
       <Footer />
-    </>
+    </AuthProvider>
   );
 }

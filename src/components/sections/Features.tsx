@@ -21,7 +21,7 @@ export function Features() {
         >
           {features.map((feature) => (
             <StaggerItem key={feature.title} className="h-full">
-              <article className="group flex h-full flex-col gap-3 rounded-2xl border bg-card p-6 shadow-card transition-[box-shadow,border-color,transform] duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-line-strong hover:shadow-lifted">
+              <article className="group flex h-full flex-col gap-3 rounded-2xl border bg-card p-6 shadow-card transition-[box-shadow,border-color,translate] duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-line-strong hover:shadow-lifted motion-reduce:hover:translate-y-0">
                 <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-brand-text">
                   <feature.icon className="size-5" aria-hidden="true" />
                 </span>

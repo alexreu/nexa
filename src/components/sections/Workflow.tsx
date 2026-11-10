@@ -13,13 +13,13 @@ const illustration =
 function PromptIllustration() {
   return (
     <div className={`${illustration} justify-between`}>
-      <p className="text-[0.8125rem] leading-relaxed text-muted-foreground">
+      <p className="text-small leading-relaxed text-muted-foreground">
         {processPrompt}
         <span className="ml-0.5 inline-block h-4 w-px bg-primary align-text-bottom" />
       </p>
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[0.6875rem] text-subtle">Nexa AI</span>
-        <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2.5 py-1.5 text-[0.6875rem] font-medium text-primary-foreground">
+        <span className="font-mono text-caption text-subtle">Nexa AI</span>
+        <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2.5 py-1.5 text-caption font-medium text-primary-foreground">
           <Sparkles className="size-3" aria-hidden="true" />
           Générer
         </span>
@@ -46,7 +46,7 @@ function BuildIllustration() {
       ))}
       <div className="flex items-center gap-2.5 rounded-lg border border-dashed px-2.5 py-2 text-subtle">
         <Plus className="size-3.5" aria-hidden="true" />
-        <span className="text-[0.6875rem]">Action suivante…</span>
+        <span className="text-caption">Action suivante…</span>
       </div>
     </div>
   );
@@ -67,13 +67,13 @@ function RunIllustration() {
           key={entry.label}
           className="flex items-center justify-between gap-3"
         >
-          <span className="flex items-center gap-2 text-[0.8125rem]">
+          <span className="flex items-center gap-2 text-small">
             <span className="grid size-5 place-items-center rounded-full bg-success/12 text-success">
               <Check className="size-3" aria-hidden="true" />
             </span>
             {entry.label}
           </span>
-          <span className="font-mono text-[0.6875rem] text-subtle">
+          <span className="font-mono text-caption text-subtle">
             {entry.time}
           </span>
         </div>

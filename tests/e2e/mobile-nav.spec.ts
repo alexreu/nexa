@@ -38,3 +38,33 @@ test("la navigation mobile s'ouvre, navigue et se ferme au clavier", async ({
   await expect(menu).toBeHidden();
   await expect(page.locator("#tarifs")).toBeInViewport();
 });
+
+test("le menu mobile se ferme d'un glissement vers la droite", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Viewport mobile uniquement");
+
+  await page.goto("/");
+  await page.locator('button[data-slot="sheet-trigger"]').click();
+
+  const menu = page.getByRole("dialog", { name: "Menu principal" });
+  await expect(menu).toBeVisible();
+  const box = await menu.boundingBox();
+  if (!box) throw new Error("Menu sans dimensions");
+
+  // A short drag back to the left springs open again...
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + 60, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 90, y, { steps: 6 });
+  await page.waitForTimeout(150);
+  await page.mouse.up();
+  await expect(menu).toBeVisible();
+
+  // ...while a decisive one past the middle dismisses it.
+  await page.mouse.move(box.x + 40, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width, y, { steps: 10 });
+  await page.mouse.up();
+  await expect(menu).toBeHidden();
+});

@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import {
+  useRef,
+  useState,
+  type FocusEvent,
+  type FormEvent,
+  type ChangeEvent,
+} from "react";
 import { Building2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,8 +19,10 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/Field";
 
-type Mode = "signin" | "signup";
-type Errors = Partial<Record<"name" | "email" | "password", string>>;
+export type AuthMode = "signin" | "signup";
+type FieldName = "name" | "email" | "password";
+type Errors = Partial<Record<FieldName, string>>;
+type Status = "idle" | "valid" | "sso";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -33,9 +41,16 @@ const copy = {
     switchPrompt: "Déjà un compte ?",
     switchAction: "Se connecter",
   },
-} satisfies Record<Mode, Record<string, string>>;
+} satisfies Record<AuthMode, Record<string, string>>;
 
-function validate(mode: Mode, form: HTMLFormElement): Errors {
+const statusMessages: Record<Status, string> = {
+  idle: "",
+  valid:
+    "Formulaire valide. Aucune donnée n'a été envoyée : Nexa est une démonstration.",
+  sso: "Le SSO n'est pas disponible : Nexa est une démonstration et ne se connecte à aucun fournisseur d'identité.",
+};
+
+function validate(mode: AuthMode, form: HTMLFormElement): Errors {
   const data = new FormData(form);
   const name = String(data.get("name") ?? "").trim();
   const email = String(data.get("email") ?? "").trim();
@@ -56,46 +71,86 @@ function validate(mode: Mode, form: HTMLFormElement): Errors {
   return errors;
 }
 
+function isFieldName(value: string): value is FieldName {
+  return value === "name" || value === "email" || value === "password";
+}
+
+/** Keeps only the errors of the fields the visitor has already dealt with. */
+function pick(errors: Errors, fields: ReadonlySet<FieldName>): Errors {
+  return Object.fromEntries(
+    Object.entries(errors).filter(([key]) => fields.has(key as FieldName)),
+  );
+}
+
 export function AuthDialog({
   open,
   onOpenChange,
-  initialMode = "signin",
+  mode,
+  onModeChange,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialMode?: Mode;
+  mode: AuthMode;
+  onModeChange: (mode: AuthMode) => void;
 }) {
-  const [mode, setMode] = useState<Mode>(initialMode);
   const [errors, setErrors] = useState<Errors>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  // Fields left with something typed in, or every field once the form has
+  // been submitted: only those are validated as the visitor goes, so tabbing
+  // through an empty form never paints it red.
+  const touched = useRef(new Set<FieldName>());
   const formRef = useRef<HTMLFormElement>(null);
+
+  function resetForm() {
+    touched.current = new Set();
+    setErrors({});
+    setStatus("idle");
+  }
 
   // Start each visit from a clean form rather than the previous attempt.
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      setMode(initialMode);
-      setErrors({});
-      setSubmitted(false);
-    }
+    if (!nextOpen) resetForm();
     onOpenChange(nextOpen);
   }
 
   function switchMode() {
-    setMode((current) => (current === "signin" ? "signup" : "signin"));
-    setErrors({});
-    setSubmitted(false);
+    onModeChange(mode === "signin" ? "signup" : "signin");
+    resetForm();
     formRef.current?.reset();
+  }
+
+  function handleBlur(event: FocusEvent<HTMLFormElement>) {
+    const input: EventTarget = event.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    const { name, value } = input;
+    if (!isFieldName(name) || value.length === 0) return;
+    touched.current.add(name);
+    setErrors(pick(validate(mode, event.currentTarget), touched.current));
+  }
+
+  // An error clears as soon as the value becomes valid, not on the next blur.
+  function handleChange(event: ChangeEvent<HTMLFormElement>) {
+    const input: EventTarget = event.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    const { name } = input;
+    if (!isFieldName(name) || !touched.current.has(name)) return;
+    setErrors(pick(validate(mode, event.currentTarget), touched.current));
+    setStatus("idle");
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const found = validate(mode, form);
+
+    const fields: FieldName[] =
+      mode === "signup" ? ["name", "email", "password"] : ["email", "password"];
+    touched.current = new Set(fields);
     setErrors(found);
-    setSubmitted(Object.keys(found).length === 0);
+    setStatus(Object.keys(found).length === 0 ? "valid" : "idle");
 
     // Send focus to the first field that needs attention.
-    const firstInvalid = Object.keys(found)[0];
+    const firstInvalid = fields.find((field) => found[field]);
     if (firstInvalid) {
       form.querySelector<HTMLInputElement>(`[name="${firstInvalid}"]`)?.focus();
     }
@@ -117,6 +172,8 @@ export function AuthDialog({
         <form
           ref={formRef}
           onSubmit={handleSubmit}
+          onBlur={handleBlur}
+          onChange={handleChange}
           noValidate
           autoComplete="off"
           className="flex flex-col gap-4"
@@ -156,29 +213,34 @@ export function AuthDialog({
           <Button type="submit" className="mt-1 w-full">
             {text.submit}
           </Button>
-
-          <p aria-live="polite" className="text-sm text-muted-foreground">
-            {submitted
-              ? "Formulaire valide. Aucune donnée n'a été envoyée : Nexa est une démonstration."
-              : ""}
-          </p>
         </form>
 
         <div className="flex items-center gap-3" aria-hidden="true">
           <span className="h-px flex-1 bg-border" />
-          <span className="text-[0.8125rem] text-subtle">ou</span>
+          <span className="text-small text-subtle">ou</span>
           <span className="h-px flex-1 bg-border" />
         </div>
 
-        <Button
-          type="button"
-          variant="secondary"
-          className="w-full"
-          onClick={() => setSubmitted(true)}
-        >
-          <Building2 aria-hidden="true" />
-          Continuer avec le SSO de votre entreprise
-        </Button>
+        {/* The live region stays rendered — a region that appears with its
+            message is not reliably announced — and only takes room once it
+            has something to say. */}
+        <div className="flex flex-col">
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            onClick={() => setStatus("sso")}
+          >
+            <Building2 aria-hidden="true" />
+            Continuer avec le SSO de votre entreprise
+          </Button>
+          <p
+            aria-live="polite"
+            className="text-sm text-pretty text-muted-foreground not-empty:mt-4"
+          >
+            {statusMessages[status]}
+          </p>
+        </div>
 
         <div className="flex flex-col gap-3 border-t pt-5 text-center">
           <p className="text-sm text-muted-foreground">
@@ -186,12 +248,12 @@ export function AuthDialog({
             <button
               type="button"
               onClick={switchMode}
-              className="font-medium text-brand-text underline-offset-4 hover:underline"
+              className="rounded-sm font-medium text-brand-text underline-offset-4 hover:underline active:opacity-70"
             >
               {text.switchAction}
             </button>
           </p>
-          <p className="text-[0.8125rem] text-pretty text-subtle">
+          <p className="text-small text-pretty text-subtle">
             Démonstration : le formulaire vérifie sa saisie mais ne crée aucun
             compte et n&apos;envoie aucune donnée.
           </p>

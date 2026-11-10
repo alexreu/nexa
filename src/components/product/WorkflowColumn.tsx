@@ -1,7 +1,11 @@
 import { Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import type { NodeKind, WorkflowStep } from "@/data/workflow";
+import {
+  formatSeconds,
+  type NodeKind,
+  type WorkflowStep,
+} from "@/data/workflow";
 
 export type StepStatus = "idle" | "running" | "done";
 
@@ -59,7 +63,7 @@ function WorkflowNode({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[0.6875rem] font-semibold tracking-[0.09em] text-subtle uppercase">
+            <span className="text-caption font-semibold tracking-[0.09em] text-subtle uppercase">
               {step.label}
             </span>
             <span className="flex shrink-0 items-center gap-1.5">
@@ -67,10 +71,11 @@ function WorkflowNode({
                 className={cn(
                   "size-1.5 rounded-full",
                   statusDots[status],
-                  status === "running" && "animate-pulse",
+                  status === "running" &&
+                    "animate-pulse motion-reduce:animate-none",
                 )}
               />
-              <span className="text-[0.6875rem] text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 {statusLabels[status]}
               </span>
             </span>
@@ -78,13 +83,13 @@ function WorkflowNode({
           <p
             className={cn(
               "mt-1 truncate font-medium",
-              compact ? "text-[0.8125rem]" : "text-sm",
+              compact ? "text-small" : "text-sm",
             )}
           >
             {step.title}
           </p>
-          <p className="mt-0.5 font-mono text-[0.6875rem] text-subtle">
-            {step.app} · {step.duration}
+          <p className="mt-0.5 font-mono text-caption text-subtle">
+            {step.app} · {formatSeconds(step.durationMs)}
           </p>
         </div>
       </div>

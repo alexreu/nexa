@@ -22,17 +22,18 @@ performances, qualité du code, animations, SEO.
 
 ## Résultats mesurés
 
-Lighthouse, build de production servi en local (`next start`) :
+Build de production servi en local (`next start`), mesuré dans Chrome :
+Lighthouse (DevTools) pour l'accessibilité, les bonnes pratiques et le SEO,
+trace de performance pour les signaux web essentiels.
 
 | Catégorie        | Desktop | Mobile |
 | ---------------- | ------- | ------ |
-| Performance      | 100     | 95     |
 | Accessibilité    | 100     | 100    |
 | Bonnes pratiques | 100     | 100    |
 | SEO              | 100     | 100    |
 
-Desktop : LCP 0,6 s · CLS 0 · TBT 0 ms. Mobile : LCP 2,9 s · CLS 0 · TBT 60 ms.
-JavaScript transféré : ~215 kB sur 8 requêtes ; CSS : 10,6 kB.
+Desktop : LCP 0,12 s · CLS 0. Mobile (CPU ×4, Slow 4G, 375 px) : LCP 1,8 s ·
+CLS 0. JavaScript transféré : ~234 kB sur 8 requêtes ; CSS : 11,3 kB.
 
 Aucun débordement horizontal aux huit largeurs testées (375, 390, 430, 768,
 1024, 1280, 1440, 1920), dans les deux thèmes.
@@ -78,17 +79,33 @@ Les deux partagent le même composant de nœuds, ce qui permet à la modale de
 démonstration de rejouer l'exécution étape par étape en pilotant seulement les
 statuts.
 
-**Mouvement contenu.** Les survols, dégradés et halos sont en CSS pur ; Motion
-ne sert qu'aux entrées, au décalage en cascade et au compteur. `LazyMotion` en
-mode `strict` interdit les composants `motion.*` lourds, et
-`prefers-reduced-motion` est respecté partout — le compteur affiche
-immédiatement sa valeur finale plutôt que de rester figé à zéro.
+**Mouvement physique, pas décoratif.** Les survols, dégradés et halos sont en
+CSS pur. Le hero entre par une animation CSS qui démarre au premier rendu :
+le titre, élément LCP, n'attend jamais l'hydratation et reste visible sans
+JavaScript. Motion gère les apparitions au défilement (ressorts amortis
+critiques, sans rebond), le compteur — déclenché par l'apparition de sa
+rangée, pas par un seuil à lui — et le menu mobile : il se saisit à tout
+instant, même en pleine animation, suit le doigt 1:1, résiste au-delà de sa
+position ouverte, et un geste vif le ferme grâce à la vitesse transmise au
+ressort et à la projection de l'élan. Les modales grandissent depuis le
+contrôle qui les ouvre et s'y referment ; le chevron de la FAQ pivote ; un
+bouton cède dès l'appui, au toucher comme à la souris ; la bascule de thème
+passe par un fondu enchaîné. `LazyMotion` en mode `strict` interdit les
+composants `motion.*` lourds.
 
-**Formulaire de connexion sans authentification.** « Connexion » ouvre une
-vraie modale avec deux modes, connexion et inscription. La validation est
+**Préférences système.** `prefers-reduced-motion` remplace déplacements et
+zooms par de courts fondus plutôt que de tout couper ;
+`prefers-reduced-transparency` rend opaques l'en-tête et les voiles ;
+`prefers-contrast: more` renforce séparateurs et textes secondaires.
+
+**Formulaire de connexion sans authentification.** « Connexion » et chaque
+« Commencer gratuitement » — en-tête, hero, tarifs, appel final, menu
+mobile — ouvrent la même modale, en mode connexion ou inscription. La validation est
 réelle — format de l'e-mail, longueur du mot de passe, nom requis à
 l'inscription — et chaque champ porte `aria-invalid` et pointe vers son
-message par `aria-describedby`, le focus allant au premier champ fautif. Mais
+message par `aria-describedby`, le focus allant au premier champ fautif.
+Chaque champ est vérifié quand on le quitte et son erreur disparaît dès que
+la saisie devient valide ; le bouton SSO dit qu'il n'est pas disponible. Mais
 rien n'est authentifié : aucune requête n'est émise, `autoComplete` est
 désactivé pour qu'aucun gestionnaire de mots de passe ne propose d'enregistrer
 un identifiant sur un produit qui n'existe pas, et la modale le dit en toutes
@@ -96,8 +113,8 @@ lettres. Un test vérifie qu'aucune requête non-GET ne part.
 
 **Liens sans destination.** Le produit n'existant pas, les entrées de pied de
 page sans page correspondante sont du texte, pas des contrôles qui ne mènent
-nulle part, et le pied de page le dit. Les boutons de tarifs pointent vers
-l'appel à l'action final.
+nulle part, et le pied de page le dit. Les boutons de tarifs ouvrent
+l'inscription.
 
 ## Captures
 
@@ -174,21 +191,26 @@ src/
 │   └── ui/                   primitives shadcn restylées, Counter, BrandLogo
 ├── data/                     tout le contenu rédactionnel, typé
 └── lib/                      utilitaire `cn`, configuration du site
-tests/e2e/                    cinq scénarios Playwright
+tests/e2e/                    scénarios Playwright
 scripts/                      génération des captures
 ```
 
 ### Conventions
 
 - Les Server Components sont le défaut. `"use client"` n'apparaît que sur le
-  header, le menu mobile, la bascule de thème, l'accordéon, la modale de
-  démonstration, le compteur et les enveloppes d'animation.
+  header, le menu mobile, la bascule de thème, l'accordéon, les modales
+  (démonstration, compte) et leurs déclencheurs, le champ de formulaire, le
+  compteur et les enveloppes d'animation.
 - Aucune couleur en dur dans un composant : tout passe par un jeton.
 - Tout le contenu vit dans `src/data`, jamais dans le JSX.
 - L'espacement vertical appartient à `Section`, pas aux sections elles-mêmes.
-- Les classes se composent avec `cn`, jamais en passant `className` à
-  `buttonVariants` — sans tailwind-merge, une classe de base peut l'emporter
-  sur celle qu'on ajoute.
+- Les classes se composent avec `cn`, qui résout les conflits Tailwind. Il
+  est configuré avec les jetons du projet (`text-h3`, `shadow-card`…) dans
+  `src/lib/utils.ts` : tout nouveau jeton de taille, d'ombre ou de courbe
+  doit y être déclaré, sinon `cn("text-h3", "text-subtle")` perd la taille.
+- Les tailles de texte passent par des jetons (`text-caption`, `text-small`,
+  `text-body-sm`…), pas par des valeurs arbitraires.
+- Les décalages d'ancre viennent du seul `scroll-padding-top` de `<html>`.
 
 ## Accessibilité
 
@@ -201,7 +223,10 @@ scripts/                      génération des captures
   déclencheur ; en suivant un lien, le focus va à la section visée.
 - La maquette produit est décorative : masquée aux lecteurs d'écran et décrite
   par une légende textuelle.
-- `prefers-reduced-motion` neutralise animations et défilement doux.
+- `prefers-reduced-motion` remplace mouvements et zooms par des fondus et
+  coupe le défilement doux ; transparence et contraste réduits sont aussi
+  respectés.
+- Sans JavaScript, tout le contenu reste visible.
 - Le formulaire de connexion associe étiquettes, champs et messages d'erreur,
   et déplace le focus sur le premier champ à corriger. Lighthouse note 100 en
   accessibilité modale ouverte comme fermée.
@@ -212,14 +237,18 @@ scripts/                      génération des captures
 pnpm test:e2e
 ```
 
-Six scénarios, joués sur desktop (1280) et mobile (375) :
+Scénarios joués sur desktop (1280) et mobile (375) :
 
 1. la page se charge, ses repères existent, la console est vide ;
-2. la navigation mobile s'ouvre, navigue et se ferme au clavier ;
+2. la navigation mobile s'ouvre, navigue et se ferme au clavier, et se
+   referme d'un glissement ;
 3. la FAQ ouvre et referme ses réponses, une seule à la fois ;
-4. les appels à l'action sont visibles et la démonstration s'exécute ;
-5. le formulaire de connexion valide sa saisie et n'émet aucune requête ;
-6. aucun débordement horizontal à 375, 390 et 430 px.
+4. les appels à l'action ouvrent l'inscription et la démonstration ;
+5. le formulaire de connexion valide sa saisie, au fil de l'eau comme à
+   l'envoi, et n'émet aucune requête ;
+6. le contenu reste visible sans JavaScript ;
+7. la bascule de thème change de thème et s'en souvient ;
+8. aucun débordement horizontal à 375, 390 et 430 px.
 
 ## Déploiement
 

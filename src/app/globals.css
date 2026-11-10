@@ -70,6 +70,22 @@
   --text-label--line-height: 1.4;
   --text-label--letter-spacing: 0.02em;
 
+  /* UI sizes. Tracking opens up slightly as the text gets smaller. */
+  --text-body-lg: 1.0625rem;
+  --text-body-lg--line-height: 1.5;
+  --text-body-lg--letter-spacing: -0.006em;
+
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.5;
+
+  --text-small: 0.8125rem;
+  --text-small--line-height: 1.45;
+  --text-small--letter-spacing: 0.004em;
+
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.012em;
+
   /* Radius — deliberately softer than the shadcn default ramp */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -86,9 +102,35 @@
   --shadow-overlay: var(--elevation-overlay);
   --shadow-glow: var(--elevation-glow);
 
-  /* Motion */
+  /* Motion — one curve family for the whole page. Entrances use
+     --ease-out-soft; a press goes in fast and comes back slower. */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-rise: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--i, 0) * 90ms) both;
+  --animate-settle: settle 0.9s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--i, 0) * 90ms) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
 }
 
 :root {
@@ -112,6 +154,7 @@
 
   --accent-cyan: oklch(0.612 0.102 205);
   --scrim: oklch(0.1875 0.02 278 / 0.4);
+  --scrim-solid: oklch(0.1875 0.02 278 / 0.6);
   --danger: oklch(0.577 0.245 27.325);
   --danger-text: oklch(0.55 0.2 27.325);
   --success: oklch(0.58 0.14 155);
@@ -155,6 +198,7 @@
 
   --accent-cyan: oklch(0.76 0.115 205);
   --scrim: oklch(0 0 0 / 0.65);
+  --scrim-solid: oklch(0 0 0 / 0.8);
   --danger: oklch(0.704 0.191 22.216);
   --danger-text: oklch(0.63 0.15 27.325);
   --success: oklch(0.7 0.15 155);
@@ -193,6 +237,13 @@
   }
 
   /* Never remove the outline without a replacement (a11y requirement). */
+  /* Theme switches cross-fade instead of flashing (see ThemeToggle). */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
   :focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: 2px;
@@ -220,6 +271,58 @@
   }
 }
 
+/* Translucent surfaces. A material is a layer that lets the page show
+   through it; it turns solid when the visitor asks for less transparency. */
+@utility material-bar {
+  background-color: color-mix(in oklab, var(--canvas) 72%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--canvas);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@utility material-scrim {
+  background-color: var(--scrim);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--scrim-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Increased contrast: firmer dividers and darker secondary text. The light
+   values are scoped with :not(.dark) so they cannot override the dark theme.
+   ------------------------------------------------------------------------- */
+@media (prefers-contrast: more) {
+  :root:not(.dark) {
+    --line: oklch(0.72 0.012 278);
+    --line-strong: oklch(0.58 0.014 278);
+    --ink-muted: oklch(0.38 0.02 278);
+    --ink-subtle: oklch(0.42 0.02 278);
+  }
+
+  .dark {
+    --line: oklch(0.5 0.02 278);
+    --line-strong: oklch(0.62 0.02 278);
+    --ink-muted: oklch(0.86 0.01 278);
+    --ink-subtle: oklch(0.8 0.012 278);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Reduced motion means gentler motion, not none: anything that travels or
+   scales becomes a short cross-fade, and fades that help follow a change
+   are kept. Motion's own animations follow the same rule through
+   <MotionConfig reducedMotion="user">.
+   ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -228,9 +331,33 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    /* tw-animate enter/exit: keep the fade, drop the travel and zoom. */
+    --tw-enter-scale: 1 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
     scroll-behavior: auto !important;
+  }
+
+  .animate-rise,
+  .animate-settle {
+    animation-name: fade;
+    animation-duration: 300ms;
+  }
+
+  /* Height changes become an immediate swap with a fade of the content. */
+  [data-slot="accordion-content"] {
+    animation: none !important;
+  }
+
+  [data-slot="accordion-content"][data-state="open"] {
+    animation: fade 200ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 200ms;
   }
 }

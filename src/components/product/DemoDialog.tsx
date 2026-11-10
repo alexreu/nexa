@@ -17,10 +17,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { mockupWorkflowName, workflowSteps } from "@/data/workflow";
+import {
+  formatSeconds,
+  mockupWorkflowName,
+  workflowSteps,
+} from "@/data/workflow";
 
-const STEP_DURATION_MS = 850;
-const TOTAL_DURATION = "2,2 s";
+/**
+ * Each step plays for its real run time, slowed down enough to be followed
+ * and never shorter than a beat, so the AI step visibly takes longest — as
+ * it does in the figures shown on the nodes.
+ */
+const PLAYBACK_SCALE = 1.4;
+const MIN_STEP_MS = 380;
+const stepEndsAt = workflowSteps.reduce<number[]>((ends, step) => {
+  const previous = ends[ends.length - 1] ?? 0;
+  return [
+    ...ends,
+    previous + Math.max(MIN_STEP_MS, step.durationMs * PLAYBACK_SCALE),
+  ];
+}, []);
+const TOTAL_DURATION = formatSeconds(
+  workflowSteps.reduce((total, step) => total + step.durationMs, 0),
+);
 
 function statusesFor(completed: number): Record<string, StepStatus> {
   return Object.fromEntries(
@@ -46,11 +65,8 @@ export function DemoDialog() {
   useEffect(() => {
     if (!open || prefersReducedMotion) return;
 
-    const timers = workflowSteps.map((_, index) =>
-      window.setTimeout(
-        () => setElapsedSteps(index + 1),
-        (index + 1) * STEP_DURATION_MS,
-      ),
+    const timers = stepEndsAt.map((endsAt, index) =>
+      window.setTimeout(() => setElapsedSteps(index + 1), endsAt),
     );
     return () => timers.forEach(window.clearTimeout);
     // `runId` restarts the sequence when the user replays it.
@@ -61,6 +77,7 @@ export function DemoDialog() {
     setOpen(nextOpen);
   }
 
+  // Available at any time: restarting must never wait for the run to end.
   function replay() {
     setElapsedSteps(0);
     setRunId((id) => id + 1);
@@ -98,12 +115,7 @@ export function DemoDialog() {
               ? `Exécution terminée en ${TOTAL_DURATION}.`
               : `Étape ${completed + 1} sur ${workflowSteps.length}…`}
           </p>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={replay}
-            disabled={!finished}
-          >
+          <Button variant="secondary" size="sm" onClick={replay}>
             <RotateCcw aria-hidden="true" />
             Rejouer
           </Button>

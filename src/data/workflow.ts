@@ -20,7 +20,8 @@ export type WorkflowStep = {
   label: string;
   title: string;
   app: string;
-  duration: string;
+  /** Run time of the step, in milliseconds. */
+  durationMs: number;
   icon: LucideIcon;
 };
 
@@ -32,7 +33,7 @@ export const workflowSteps: WorkflowStep[] = [
     label: "Quand",
     title: "Nouveau formulaire reçu",
     app: "Formulaires",
-    duration: "0,2 s",
+    durationMs: 200,
     icon: Inbox,
   },
   {
@@ -41,7 +42,7 @@ export const workflowSteps: WorkflowStep[] = [
     label: "Nexa AI",
     title: "Analyser la demande",
     app: "Nexa AI",
-    duration: "1,1 s",
+    durationMs: 1100,
     icon: Sparkles,
   },
   {
@@ -50,7 +51,7 @@ export const workflowSteps: WorkflowStep[] = [
     label: "Action",
     title: "Créer une tâche Notion",
     app: "Notion",
-    duration: "0,6 s",
+    durationMs: 600,
     icon: SquareCheckBig,
   },
   {
@@ -59,7 +60,7 @@ export const workflowSteps: WorkflowStep[] = [
     label: "Action",
     title: "Notifier l'équipe Slack",
     app: "Slack",
-    duration: "0,3 s",
+    durationMs: 300,
     icon: Send,
   },
 ];
@@ -77,6 +78,14 @@ export const mockupNav: MockupNavItem[] = [
   { label: "Équipe", icon: Users },
   { label: "Réglages", icon: Settings2 },
 ];
+
+/** French-formatted seconds: 1100 → "1,1 s". */
+export function formatSeconds(ms: number) {
+  return `${new Intl.NumberFormat("fr-FR", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(ms / 1000)}\u00a0s`;
+}
 
 export const mockupWorkflowName = "Demande client entrante";
 

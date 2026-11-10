@@ -9,8 +9,8 @@ export type Plan = {
 };
 
 /**
- * Nexa is fictional: no plan starts a payment. Every button points at the
- * closing call to action.
+ * Nexa is fictional: no plan starts a payment. Every button opens the
+ * demonstration sign-up dialog.
  */
 export const plans: Plan[] = [
   {
@@ -46,8 +46,6 @@ export const plans: Plan[] = [
       "Support prioritaire",
       "SLA contractuel",
     ],
-    cta: "Nous contacter",
+    cta: "Créer un compte",
   },
 ];
-
-export const pricingCtaHref = "#commencer";

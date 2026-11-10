@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { m, type Variants } from "motion/react";
 
+import { RevealContext } from "./RevealContext";
 import { fadeUp, revealViewport, stagger } from "./variants";
 
 type StaggerProps = {
@@ -11,27 +12,35 @@ type StaggerProps = {
   /** Delay between each child, in seconds. */
   step?: number;
   delay?: number;
-  immediate?: boolean;
 };
 
+/**
+ * Reveals its children one after another when scrolled into view. Content
+ * above the fold uses CSS instead (see Hero), so it never waits for
+ * hydration.
+ */
 export function Stagger({
   children,
   className,
   step = 0.08,
   delay = 0,
-  immediate = false,
 }: StaggerProps) {
+  const [revealed, setRevealed] = useState(false);
+
   return (
-    <m.div
-      className={className}
-      variants={stagger(step, delay)}
-      initial="hidden"
-      {...(immediate
-        ? { animate: "visible" }
-        : { whileInView: "visible", viewport: revealViewport })}
-    >
-      {children}
-    </m.div>
+    <RevealContext.Provider value={revealed}>
+      <m.div
+        data-reveal=""
+        className={className}
+        variants={stagger(step, delay)}
+        initial="hidden"
+        whileInView="visible"
+        viewport={revealViewport}
+        onViewportEnter={() => setRevealed(true)}
+      >
+        {children}
+      </m.div>
+    </RevealContext.Provider>
   );
 }
 
@@ -46,7 +55,7 @@ export function StaggerItem({
   variants?: Variants;
 }) {
   return (
-    <m.div className={className} variants={variants}>
+    <m.div data-reveal="" className={className} variants={variants}>
       {children}
     </m.div>
   );

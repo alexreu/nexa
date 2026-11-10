@@ -61,6 +61,19 @@ test("le formulaire de connexion s'ouvre, valide sa saisie et n'envoie rien", as
   await expect(dialog.getByLabel("Nom complet")).toBeVisible();
   await expect(dialog.getByPlaceholder("8 caractères minimum")).toBeVisible();
 
+  // Fields are checked as the visitor leaves them, and the error clears as
+  // soon as the value becomes valid.
+  await dialog.getByLabel("Nom complet").fill("C");
+  await dialog.getByLabel("Adresse e-mail").focus();
+  await expect(dialog.getByText("Indiquez votre nom.")).toBeVisible();
+  await dialog.getByLabel("Nom complet").fill("Camille");
+  await expect(dialog.getByText("Indiquez votre nom.")).toBeHidden();
+
+  // Single sign-on is not pretended to work.
+  await dialog.getByRole("button", { name: /Continuer avec le SSO/ }).click();
+  await expect(dialog.getByText(/Le SSO n'est pas disponible/)).toBeVisible();
+  await expect(dialog.getByText(/Formulaire valide/)).toHaveCount(0);
+
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
 

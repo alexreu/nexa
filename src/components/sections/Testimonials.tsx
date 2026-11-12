@@ -35,7 +35,7 @@ export function Testimonials() {
                     <span className="text-sm font-medium">
                       {testimonial.firstName}
                     </span>
-                    <span className="text-[0.8125rem] text-subtle">
+                    <span className="text-small text-subtle">
                       {testimonial.role}, {testimonial.company}
                     </span>
                   </span>

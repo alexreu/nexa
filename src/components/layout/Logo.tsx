@@ -30,7 +30,7 @@ export function Logo({
         </svg>
       </span>
       {showWordmark ? (
-        <span className="text-[1.0625rem] font-semibold tracking-[-0.02em]">
+        <span className="text-body-lg font-semibold tracking-[-0.02em]">
           Nexa
         </span>
       ) : null}

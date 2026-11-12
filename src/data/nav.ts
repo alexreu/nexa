@@ -11,11 +11,11 @@ export const navLinks: NavLink[] = [
 ];
 
 /**
- * Nexa is a fictional product with no application behind it, so every
- * account-related action points at the pricing section rather than a dead
- * `href="#"`. Documented in the README.
+ * Nexa is a fictional product with no application behind it: both account
+ * actions open the demonstration sign-in / sign-up dialog, which validates
+ * its input and says plainly that nothing is sent.
  */
 export const accountLinks = {
-  signUp: { label: "Commencer gratuitement", href: "#tarifs" },
-  signIn: { label: "Connexion", href: "#tarifs" },
+  signUp: { label: "Commencer gratuitement", mode: "signup" },
+  signIn: { label: "Connexion", mode: "signin" },
 } as const;

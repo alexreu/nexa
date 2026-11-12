@@ -4,7 +4,7 @@ import { footerGroups } from "@/data/footer";
 import { siteConfig } from "@/lib/site";
 
 const linkClass =
-  "text-muted-foreground hover:text-foreground text-sm transition-colors";
+  "text-muted-foreground hover:text-foreground active:text-foreground text-sm transition-colors";
 
 export function Footer() {
   return (
@@ -58,7 +58,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-2 border-t pt-8 text-[0.8125rem] text-subtle sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t pt-8 text-small text-subtle sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Nexa. Tous droits réservés.</p>
           <p className="text-pretty">
             Projet fictif réalisé à des fins de démonstration. Les entrées sans

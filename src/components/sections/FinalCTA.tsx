@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { AuthTrigger } from "@/components/auth/AuthTrigger";
 import { Reveal } from "@/components/motion/Reveal";
 import { buttonVariants } from "@/components/ui/button";
 import { accountLinks } from "@/data/nav";
@@ -22,12 +23,12 @@ export function FinalCTA() {
               <p className="text-lead text-pretty text-muted-foreground">
                 Automatisez vos premières tâches en quelques minutes.
               </p>
-              <a
-                href={accountLinks.signUp.href}
+              <AuthTrigger
+                mode={accountLinks.signUp.mode}
                 className={cn(buttonVariants({ size: "lg" }), "mt-2")}
               >
                 {accountLinks.signUp.label}
-              </a>
+              </AuthTrigger>
             </div>
           </div>
         </Reveal>

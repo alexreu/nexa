@@ -10,7 +10,9 @@ type SectionProps = Omit<ComponentProps<"section">, "title"> & {
 
 /**
  * Owns the page's vertical rhythm. Sections never set their own top/bottom
- * padding so spacing stays consistent across the whole landing page.
+ * padding so spacing stays consistent across the whole landing page. Anchor
+ * offsets come from `scroll-padding-top` on <html> alone: adding a
+ * `scroll-margin` here as well would double the gap under the header.
  */
 export function Section({
   className,
@@ -22,7 +24,7 @@ export function Section({
     <section
       aria-labelledby={labelledBy}
       className={cn(
-        "scroll-mt-24 py-20 sm:py-24 lg:py-32",
+        "py-20 sm:py-24 lg:py-32",
         tone === "sunk" && "bg-sunk",
         className,
       )}

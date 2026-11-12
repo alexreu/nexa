@@ -7,6 +7,48 @@ import { Dialog as DialogPrimitive } from "radix-ui";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 
+/**
+ * Where the last press happened, so a dialog can grow out of the control
+ * that opened it rather than out of the middle of the screen. Recorded in
+ * the capture phase, before any click handler opens anything.
+ */
+let lastPress: { x: number; y: number; time: number } | null = null;
+
+if (typeof window !== "undefined") {
+  window.addEventListener(
+    "pointerdown",
+    (event) => {
+      lastPress = { x: event.clientX, y: event.clientY, time: event.timeStamp };
+    },
+    { capture: true, passive: true },
+  );
+}
+
+/**
+ * The transform origin, in the dialog's own box, that points at whatever
+ * opened it: the recent press, or the focused control for a keyboard open.
+ * Measured from the box's centre, which the entrance zoom does not move.
+ */
+function originToward(node: HTMLElement): string | null {
+  let point: { x: number; y: number } | null = null;
+
+  if (lastPress && performance.now() - lastPress.time < 1000) {
+    point = lastPress;
+  } else if (
+    document.activeElement instanceof HTMLElement &&
+    document.activeElement !== document.body
+  ) {
+    const rect = document.activeElement.getBoundingClientRect();
+    point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }
+  if (!point) return null;
+
+  const rect = node.getBoundingClientRect();
+  const left = (rect.left + rect.right) / 2 - node.offsetWidth / 2;
+  const top = (rect.top + rect.bottom) / 2 - node.offsetHeight / 2;
+  return `${Math.round(point.x - left)}px ${Math.round(point.y - top)}px`;
+}
+
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -19,18 +61,6 @@ function DialogTrigger({
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
-function DialogPortal({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
-}
-
-function DialogClose({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
-}
-
 function DialogOverlay({
   className,
   ...props
@@ -39,7 +69,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-scrim duration-150 supports-backdrop-filter:backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 material-scrim duration-200 ease-out-soft data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0",
         className,
       )}
       {...props}
@@ -55,16 +85,25 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
 }) {
+  // Stable, so it runs once per opening: the origin is fixed at the moment
+  // the dialog appears and the exit shrinks back along the same path.
+  const anchorToOpener = React.useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const origin = originToward(node);
+    if (origin) node.style.transformOrigin = origin;
+  }, []);
+
   return (
-    <DialogPortal>
+    <DialogPrimitive.Portal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border bg-popover p-4 text-sm text-popover-foreground shadow-overlay duration-150 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border bg-popover p-4 text-sm text-popover-foreground shadow-overlay duration-200 ease-out-soft outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:duration-150 data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
         {...props}
+        ref={anchorToOpener}
       >
         {children}
         {showCloseButton && (
@@ -80,7 +119,7 @@ function DialogContent({
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
-    </DialogPortal>
+    </DialogPrimitive.Portal>
   );
 }
 
@@ -91,33 +130,6 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("flex flex-col gap-2", className)}
       {...props}
     />
-  );
-}
-
-function DialogFooter({
-  className,
-  showCloseButton = false,
-  children,
-  ...props
-}: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean;
-}) {
-  return (
-    <div
-      data-slot="dialog-footer"
-      className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close asChild>
-          <Button variant="secondary">Fermer</Button>
-        </DialogPrimitive.Close>
-      )}
-    </div>
   );
 }
 
@@ -155,13 +167,9 @@ function DialogDescription({
 
 export {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
-  DialogOverlay,
-  DialogPortal,
   DialogTitle,
   DialogTrigger,
 };

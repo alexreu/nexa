@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { animate, useInView, useReducedMotion } from "motion/react";
 
+import { useRevealed } from "@/components/motion/RevealContext";
 import { easeOutSoft } from "@/components/motion/variants";
 
 function formatValue(value: number, decimals: number) {
@@ -14,9 +15,10 @@ function formatValue(value: number, decimals: number) {
 
 /**
  * Renders the final figure on the server, so the number is correct without
- * JavaScript and under reduced motion. The count-up only replaces it once
- * the element is in view, and writes straight to the DOM to avoid a React
- * render on every frame.
+ * JavaScript and under reduced motion. The count-up starts when the
+ * surrounding reveal plays — its own viewport trigger would fire earlier,
+ * on a still-transparent row, and finish unseen — and writes straight to
+ * the DOM to avoid a React render on every frame.
  */
 export function Counter({
   value,
@@ -28,12 +30,14 @@ export function Counter({
   suffix?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const revealed = useRevealed();
+  const ownInView = useInView(ref, { once: true, amount: 0.6 });
+  const visible = revealed ?? ownInView;
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const element = ref.current;
-    if (!element || !inView || prefersReducedMotion) return;
+    if (!element || !visible || prefersReducedMotion) return;
 
     const controls = animate(0, value, {
       duration: 1.4,
@@ -44,7 +48,7 @@ export function Counter({
     });
 
     return () => controls.stop();
-  }, [inView, value, decimals, prefersReducedMotion]);
+  }, [visible, value, decimals, prefersReducedMotion]);
 
   return (
     <span>

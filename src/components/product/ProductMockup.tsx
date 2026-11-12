@@ -22,7 +22,7 @@ function StatusPill({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[0.6875rem] font-medium text-muted-foreground",
+        "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-caption font-medium text-muted-foreground",
         className,
       )}
     >
@@ -47,7 +47,7 @@ function MockupDesktop() {
         <span className="text-xs font-medium">{mockupWorkflowName}</span>
         <div className="ml-auto flex items-center gap-2">
           <StatusPill />
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1.5 text-[0.6875rem] font-medium text-primary-foreground">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1.5 text-caption font-medium text-primary-foreground">
             <Play className="size-3" />
             Exécuter
           </span>
@@ -63,7 +63,7 @@ function MockupDesktop() {
             <span
               key={item.label}
               className={cn(
-                "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.8125rem]",
+                "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-small",
                 index === 0
                   ? "bg-sunk font-medium text-foreground"
                   : "text-muted-foreground",
@@ -74,8 +74,8 @@ function MockupDesktop() {
             </span>
           ))}
           <div className="mt-auto rounded-xl border bg-sunk p-3">
-            <p className="text-[0.6875rem] font-medium">Plan Pro</p>
-            <p className="mt-0.5 font-mono text-[0.6875rem] text-subtle">
+            <p className="text-caption font-medium">Plan Pro</p>
+            <p className="mt-0.5 font-mono text-caption text-subtle">
               8 420 / 10 000 actions
             </p>
             <span className="mt-2 block h-1 overflow-hidden rounded-full bg-line-strong">
@@ -93,7 +93,7 @@ function MockupDesktop() {
         </div>
 
         <aside className="hidden w-60 shrink-0 flex-col gap-3 border-l p-4 xl:flex">
-          <p className="text-[0.6875rem] font-semibold tracking-[0.09em] text-subtle uppercase">
+          <p className="text-caption font-semibold tracking-[0.09em] text-subtle uppercase">
             Dernières exécutions
           </p>
           <ul className="flex flex-col gap-2">
@@ -102,10 +102,10 @@ function MockupDesktop() {
                 key={run.time}
                 className="flex items-center justify-between gap-2 rounded-lg border bg-sunk px-2.5 py-2"
               >
-                <span className="font-mono text-[0.6875rem] text-subtle">
+                <span className="font-mono text-caption text-subtle">
                   {run.time}
                 </span>
-                <span className="flex items-center gap-1.5 text-[0.6875rem] text-muted-foreground">
+                <span className="flex items-center gap-1.5 text-caption text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-success" />
                   {run.duration}
                 </span>
@@ -113,13 +113,11 @@ function MockupDesktop() {
             ))}
           </ul>
           <div className="mt-auto rounded-xl border bg-sunk p-3">
-            <p className="text-[0.6875rem] font-medium">Ce mois-ci</p>
+            <p className="text-caption font-medium">Ce mois-ci</p>
             <p className="mt-1 font-mono text-lg leading-none font-medium">
               1 284
             </p>
-            <p className="mt-1 text-[0.6875rem] text-subtle">
-              exécutions réussies
-            </p>
+            <p className="mt-1 text-caption text-subtle">exécutions réussies</p>
           </div>
         </aside>
       </div>
@@ -135,7 +133,7 @@ function MockupMobile() {
   return (
     <div className="overflow-hidden rounded-2xl border bg-card shadow-lifted lg:hidden">
       <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
-        <span className="truncate text-[0.8125rem] font-medium">
+        <span className="truncate text-small font-medium">
           {mockupWorkflowName}
         </span>
         <StatusPill />

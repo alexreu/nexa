@@ -62,7 +62,7 @@ export function BrandLogo({
       >
         {shapes[shape]}
       </svg>
-      <span className="text-[0.9375rem] font-semibold tracking-[-0.015em]">
+      <span className="text-body-sm font-semibold tracking-[-0.015em]">
         {name}
       </span>
     </span>

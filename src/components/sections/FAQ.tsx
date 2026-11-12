@@ -24,7 +24,7 @@ export function FAQ() {
           <Accordion type="single" collapsible className="border-y">
             {faqItems.map((item) => (
               <AccordionItem key={item.question} value={item.question}>
-                <AccordionTrigger className="text-[1.0625rem]">
+                <AccordionTrigger className="text-body-lg">
                   {item.question}
                 </AccordionTrigger>
                 <AccordionContent className="max-w-2xl text-pretty">

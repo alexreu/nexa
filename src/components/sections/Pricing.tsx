@@ -1,11 +1,12 @@
 import { Check } from "lucide-react";
 
+import { AuthTrigger } from "@/components/auth/AuthTrigger";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { buttonVariants } from "@/components/ui/button";
-import { plans, pricingCtaHref } from "@/data/pricing";
+import { plans } from "@/data/pricing";
 import { cn } from "@/lib/utils";
 
 export function Pricing() {
@@ -34,7 +35,7 @@ export function Pricing() {
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-h3">{plan.name}</h3>
                     {plan.featured ? (
-                      <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[0.6875rem] font-semibold tracking-[0.06em] text-brand-text uppercase">
+                      <span className="rounded-full bg-primary/10 px-2.5 py-1 text-caption font-semibold tracking-[0.06em] text-brand-text uppercase">
                         Recommandé
                       </span>
                     ) : null}
@@ -66,8 +67,8 @@ export function Pricing() {
                   ))}
                 </ul>
 
-                <a
-                  href={pricingCtaHref}
+                <AuthTrigger
+                  mode="signup"
                   className={cn(
                     buttonVariants({
                       variant: plan.featured ? "primary" : "secondary",
@@ -76,7 +77,7 @@ export function Pricing() {
                   )}
                 >
                   {plan.cta}
-                </a>
+                </AuthTrigger>
               </article>
             </StaggerItem>
           ))}
